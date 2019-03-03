@@ -4,6 +4,7 @@
 
 ## Requirement
  - Platfrom: Windows
+ - Language: Python 3.6.6
  - django (pip install django)
   
 ## Instruction
