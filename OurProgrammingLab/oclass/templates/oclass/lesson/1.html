@@ -1,0 +1,192 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<!--begin code mirror -->
+<!link rel="stylesheet" href="../lesson/codemirror-5.31.0/lib/codemirror.css"/>
+<link rel="stylesheet" href="{% static 'oclass/codemirror-5.31.0/lib/codemirror.css' %}" />
+<script src="{% static 'oclass/codemirror-5.31.0/lib/codemirror.js' %}"></script>
+<script src="{% static 'oclass/codemirror-5.31.0/mode/clike/clike.js' %}"></script>
+<link rel="stylesheet" href="{% static 'oclass/codemirror-5.31.0/theme/dracula.css' %}"/>
+<script src="{% static 'oclass/codemirror-5.31.0/addon/edit/matchbrackets.js' %}"></script>
+<!--end Code Mirror -->
+
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Hello World</title>
+
+<textarea class="form-control" id="code" name="code"></textarea>
+	<button onclick="run_code()" type="button" class="btn btn-dark">Submit</button>
+</div>
+
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: "text/x-c++src",
+        lineNumbers: true,
+        theme: "dracula",
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+        matchBrackets: true,
+    });
+
+    editor.setSize('500px', '350px');
+    editor.setValue("");
+</script>
+
+
+<div style="position: absolute; height: 292px; width: 40%; z-index: 1; right: 2%; top: 10px" id="layer1">
+	Lesson 1: Hello World
+	<p><font color="#800000">#include</font>
+	<font color="#FF3399">&lt;iostream&gt;</font></p>
+	<p><font color="#99FF66">using</font> <font color="#009933">namespace</font> std;</p>
+	<p><font color="#009933">int</font> main() {</p>
+  <p>&nbsp; cout &lt;&lt; <font color="#FF3399">&quot;Hello, world!&quot;</font><font color="#FF00FF">
+	</font>&lt;&lt; endl;</p>
+	<p>&nbsp; <font color="#99FF66">return</font> <font color="#FF3399">0</font>;</p>
+
+	<p>}</p>
+	<br />
+	Feel free to change&nbsp; &quot;Hello World!&quot; to anything you want.
+	Compile and see the output.</div>
+
+<div style="position: absolute; height: 100px; width: 10%; z-index: 1; right: 50%; top: 10px" id="layer2"> 
+	<p id="outputtext">
+	</p>
+	</div>
+
+	<style>
+		div#layer1 {
+			border: solid;
+			border-color: black;
+			padding: 2%;
+			font-family: monospace;
+		}
+		div#layer2 {
+			border: solid;
+			border-color: black;
+			padding: 1%;
+			font-family: monospace;
+		}
+	section { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+    section input { border: 0; padding: 10px; width: 87%; margin-right: .5%; }
+    section button { width: 9%; background: rgb(123, 43, ); border: none; padding: 10px; }
+	#messages {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		margin-bottom: 100px;
+		margin-top: 20px;
+		}
+    #messages li { padding: 5px 10px; }
+    #messages li:nth-child(odd) { background: #eee; }
+		.btn {
+			font-size: 15px;
+			font-family: sans-serif;
+			padding: 5px 10px;
+		}
+		.btn-dark {
+			background-color: #1A1A1A;
+			color: azure;
+			border: none;
+			margin: 10px 0px;
+		}
+	</style>
+
+	<script>
+		function run_code() {
+            var xmlhttp;
+            var raw_str = editor.getValue();
+
+            if (raw_str.length == 0) {
+                document.getElementById("outputtext").value = "";
+            }
+
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp=new XMLHttpRequest();
+            }
+            else {
+                // code for IE6, IE5
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            xmlhttp.onreadystatechange=function() {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById("outputtext").innerHTML = xmlhttp.responseText.slice(1, -1).replace(/\\n/g, "<br />");
+                }
+            }
+
+            code_str = encodeURIComponent(raw_str);
+            xmlhttp.open("POST", "runcpp", true);
+            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xmlhttp.send("code=" + code_str + "&lessonid=1")
+		}
+	</script>
+
+<script>
+    var idex = 0;
+
+    function post_msg(msg) {
+        var parent = document.getElementById("messages");
+        var childnodee = document.createElement("li");
+        childnodee.innerHTML = msg.slice(1, -1);
+        parent.appendChild(childnodee);
+    }
+
+    function check_msg() {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else {
+            // code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var msg = xmlhttp.responseText;
+                if (msg.length != 2) {
+                    idex++;
+                    post_msg(msg);
+                }
+            }
+        };
+
+        xmlhttp.open("POST", "checkmsg", true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("idex=" + idex);
+    }
+
+    function send_msg() {
+        var xmlhttp;
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else {
+            // code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        var msg = document.getElementById("text").value;
+
+        xmlhttp.onreadystatechange = function () {};
+
+        xmlhttp.open("POST", "newmsg", true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("nmsg=" + msg);
+        document.getElementById("text").value = "";
+    }
+
+    setInterval(check_msg, 1000);
+</script>
+	<ul id="messages"></ul>
+    <section>
+		<input id="text" autocomplete="off"><button onclick="send_msg()">Send</button>
+    </section>
+	</head>
+</html>
